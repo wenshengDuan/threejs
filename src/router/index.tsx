@@ -8,6 +8,7 @@ import LineSegments from "../chapter_02/bufferGeometry/lineSegments";
 import LineLoopModel from "../chapter_02/bufferGeometry/lineLoop";
 import MeshModel from "../chapter_02/bufferGeometry/mesh";
 import Indices from "../chapter_02/bufferGeometry/indices";
+import Normal from "../chapter_02/bufferGeometry/normal";
 
 export const router = createBrowserRouter(
   [
@@ -54,6 +55,10 @@ export const router = createBrowserRouter(
             {
               path: "indices",
               element: <Indices />,
+            },
+            {
+              path: "normal",
+              element: <Normal />,
             },
           ],
         },
