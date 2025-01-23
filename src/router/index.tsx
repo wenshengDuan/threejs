@@ -7,6 +7,7 @@ import LineModel from "../chapter_02/bufferGeometry/lineModel";
 import LineSegments from "../chapter_02/bufferGeometry/lineSegments";
 import LineLoopModel from "../chapter_02/bufferGeometry/lineLoop";
 import MeshModel from "../chapter_02/bufferGeometry/mesh";
+import Indices from "../chapter_02/bufferGeometry/indices";
 
 export const router = createBrowserRouter(
   [
@@ -49,6 +50,10 @@ export const router = createBrowserRouter(
             {
               path: "mesh",
               element: <MeshModel />,
+            },
+            {
+              path: "indices",
+              element: <Indices />,
             },
           ],
         },
