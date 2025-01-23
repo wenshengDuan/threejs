@@ -5,6 +5,8 @@ import Gui from "../chapter_01/gui";
 import PointsModel from "../chapter_02/bufferGeometry/pointsModel";
 import LineModel from "../chapter_02/bufferGeometry/lineModel";
 import LineSegments from "../chapter_02/bufferGeometry/lineSegments";
+import LineLoopModel from "../chapter_02/bufferGeometry/lineLoop";
+import MeshModel from "../chapter_02/bufferGeometry/mesh";
 
 export const router = createBrowserRouter(
   [
@@ -39,6 +41,14 @@ export const router = createBrowserRouter(
             {
               path: "line_segments",
               element: <LineSegments />,
+            },
+            {
+              path: "line_loop",
+              element: <LineLoopModel />,
+            },
+            {
+              path: "mesh",
+              element: <MeshModel />,
             },
           ],
         },
