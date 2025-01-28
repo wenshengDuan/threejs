@@ -36,10 +36,14 @@ const Normal: FC = () => {
 
     geometry.setAttribute("normal", new BufferAttribute(normals, 3));
 
+    geometry.translate(0, 0, 100);
+    geometry.center();
+    geometry.rotateZ(Math.PI / 4);
+
     const material = new MeshLambertMaterial({
       color: 0xffff00,
       side: DoubleSide,
-      wireframe: true,
+      // wireframe: true,  // 线框模式
     });
 
     const mesh = new Mesh(geometry, material);

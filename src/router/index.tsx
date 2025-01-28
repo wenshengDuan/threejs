@@ -9,6 +9,8 @@ import LineLoopModel from "../chapter_02/bufferGeometry/lineLoop";
 import MeshModel from "../chapter_02/bufferGeometry/mesh";
 import Indices from "../chapter_02/bufferGeometry/indices";
 import Normal from "../chapter_02/bufferGeometry/normal";
+import GroupIndex from "../chapter_03/Group";
+import TraverseIndex from "../chapter_03/Traverse";
 
 export const router = createBrowserRouter(
   [
@@ -59,6 +61,19 @@ export const router = createBrowserRouter(
             {
               path: "normal",
               element: <Normal />,
+            },
+          ],
+        },
+        {
+          path: "chapter/03",
+          children: [
+            {
+              path: "group",
+              element: <GroupIndex />,
+            },
+            {
+              path: "traverse",
+              element: <TraverseIndex />,
             },
           ],
         },
