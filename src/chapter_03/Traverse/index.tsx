@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { useInit } from "../../hooks/useInit";
 import { useMount } from "../../hooks/useMount";
-import { BoxGeometry, Group, Mesh, MeshLambertMaterial, Object3D } from "three";
+import { AxesHelper, BoxGeometry, Group, Mesh, MeshLambertMaterial, Object3D, Vector3 } from "three";
 
 const TraverseIndex: FC = () => {
-  const { scene, camera, directionalLight, directionalLightHelper } = useInit("canvas");
+  const { scene, camera, directionalLight, directionalLightHelper, onRender } = useInit("canvas");
 
   useMount(() => {
     const group1 = new Group();
@@ -26,6 +26,13 @@ const TraverseIndex: FC = () => {
     const group2 = new Group();
     group2.name = "洋房";
     group2.position.set(0, 30, 100);
+    group2.visible = false;
+    const groupV3 = new Vector3();
+    group2.getWorldPosition(groupV3);
+    console.log("group2-世界坐标", groupV3);
+    const g2AxesHelper = new AxesHelper(300);
+    group2.add(g2AxesHelper);
+
     for (let i = 0; i < 5; i++) {
       const box = new BoxGeometry(50, 60, 50);
       const material = new MeshLambertMaterial({
@@ -51,10 +58,27 @@ const TraverseIndex: FC = () => {
       if (obj.name === "1号楼" && obj instanceof Mesh) {
         obj.material.color.set(0xffff00);
         console.log("1号楼", obj);
+        console.log("1号楼局部坐标", obj.position);
+        const v3 = new Vector3();
+        obj.getWorldPosition(v3);
+        console.log("1号楼世界坐标", v3);
+        // obj.visible = false;
+        obj.material.visible = false;
       }
     });
 
     const obj = model.getObjectByName("8号楼");
+    obj!.translateZ(50);
+    const objHelper = new AxesHelper(150);
+    obj?.add(objHelper);
+
+    onRender(() => {
+      if (obj && obj instanceof Mesh) {
+        obj.geometry.translate(0.1, 0, 0);
+        obj.rotateY(0.01);
+      }
+    });
+
     if (obj instanceof Mesh) {
       obj.material.color.set(0xffff00);
     }

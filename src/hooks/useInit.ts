@@ -1,53 +1,41 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Scene } from "three";
 import { createPerspectiveCamera } from "../utils/camera";
 import { createWebGLRender } from "../utils/render";
 import { createOrbitControls } from "../utils/controls";
-import {
-  createAxesHelper,
-  createDirectionalLightHelper,
-} from "../utils/helper";
+import { createAxesHelper, createDirectionalLightHelper } from "../utils/helper";
 import { useMount } from "./useMount";
 import { createAmbientLight, createDirectionalLight } from "../utils/light";
 
 export function useInit(domId: string) {
   const [scene] = useState(() => new Scene());
-  const [camera] = useState(() =>
-    createPerspectiveCamera(
-      90,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    )
-  );
+  const [camera] = useState(() => createPerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000));
   const [ambientLight] = useState(() => createAmbientLight(0xffffff, 0.5));
-  const [directionalLight] = useState(() =>
-    createDirectionalLight(0xffffff, 3)
-  );
-  const [directionalLightHelper] = useState(() =>
-    createDirectionalLightHelper(directionalLight, 5, 0xffff00)
-  );
+  const [directionalLight] = useState(() => createDirectionalLight(0xffffff, 3));
+  const [directionalLightHelper] = useState(() => createDirectionalLightHelper(directionalLight, 5, 0xffff00));
 
   const [renderer] = useState(() =>
     createWebGLRender({
       antialias: true,
     })
   );
-  const [controls] = useState(() =>
-    createOrbitControls(camera, renderer.domElement)
-  );
+  const [controls] = useState(() => createOrbitControls(camera, renderer.domElement));
 
   const [axesHelper] = useState(() => createAxesHelper(400));
 
+  const renderListener = useRef<Array<() => void>>([]);
+
+  const onRender = useCallback((cb: () => void) => {
+    renderListener.current.push(cb);
+
+    return () => {
+      renderListener.current = renderListener.current.filter((item) => item !== cb);
+    };
+  }, []);
+
   useMount(() => {
-    const obj = [
-      camera,
-      ambientLight,
-      directionalLight,
-      axesHelper,
-      directionalLightHelper,
-    ];
-    obj.forEach((item) => scene.add(item));
+    const obj = [camera, ambientLight, directionalLight, axesHelper, directionalLightHelper];
+    scene.add(...obj);
 
     document.querySelector(`#${domId}`)?.appendChild(renderer.domElement);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -60,6 +48,8 @@ export function useInit(domId: string) {
       const aspect = width / height;
       camera.aspect = aspect;
       camera.updateProjectionMatrix();
+
+      renderListener.current?.forEach((cb) => cb());
 
       requestAnimationFrame(render);
     }
@@ -77,15 +67,7 @@ export function useInit(domId: string) {
       directionalLightHelper,
       axesHelper,
       controls,
+      onRender,
     };
-  }, [
-    directionalLightHelper,
-    ambientLight,
-    axesHelper,
-    camera,
-    controls,
-    directionalLight,
-    renderer,
-    scene,
-  ]);
+  }, [scene, camera, renderer, ambientLight, directionalLight, directionalLightHelper, axesHelper, controls, onRender]);
 }
