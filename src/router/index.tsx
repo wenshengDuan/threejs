@@ -11,6 +11,7 @@ import Indices from "../chapter_02/bufferGeometry/indices";
 import Normal from "../chapter_02/bufferGeometry/normal";
 import GroupIndex from "../chapter_03/Group";
 import TraverseIndex from "../chapter_03/Traverse";
+import OrthographicIndex from "../chapter_04/orthographic";
 
 export const router = createBrowserRouter(
   [
@@ -74,6 +75,15 @@ export const router = createBrowserRouter(
             {
               path: "traverse",
               element: <TraverseIndex />,
+            },
+          ],
+        },
+        {
+          path: "chapter/04",
+          children: [
+            {
+              path: "orthographic",
+              element: <OrthographicIndex />,
             },
           ],
         },
