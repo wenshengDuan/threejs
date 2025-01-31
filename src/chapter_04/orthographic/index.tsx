@@ -37,6 +37,12 @@ const OrthographicIndex = () => {
 
     onRender(() => {
       renderer.render(scene, orthographicCamera);
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const aspect = width / height;
+      orthographicCamera.left = -s * aspect;
+      orthographicCamera.right = s * aspect;
+      orthographicCamera.updateProjectionMatrix();
     });
   });
 

@@ -12,6 +12,7 @@ import Normal from "../chapter_02/bufferGeometry/normal";
 import GroupIndex from "../chapter_03/Group";
 import TraverseIndex from "../chapter_03/Traverse";
 import OrthographicIndex from "../chapter_04/orthographic";
+import Box3Index from "../chapter_04/box3";
 
 export const router = createBrowserRouter(
   [
@@ -84,6 +85,10 @@ export const router = createBrowserRouter(
             {
               path: "orthographic",
               element: <OrthographicIndex />,
+            },
+            {
+              path: "box3",
+              element: <Box3Index />,
             },
           ],
         },
