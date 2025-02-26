@@ -16,6 +16,7 @@ import Box3Index from "../chapter_04/box3";
 import Model from "../chapter_06/model";
 import Matrix from "../chapter_25/matrix";
 import Trigonometric from "../chapter_25/trigonometric";
+import VectorThree from "../chapter_25/vector3";
 
 export const router = createBrowserRouter(
   [
@@ -114,6 +115,10 @@ export const router = createBrowserRouter(
             {
               path: "trig",
               element: <Trigonometric />,
+            },
+            {
+              path: "vector3",
+              element: <VectorThree />,
             },
           ],
         },

@@ -43,13 +43,15 @@ export function useInit(domId: string) {
     function render() {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      renderer.setSize(width, height);
-      renderer.render(scene, camera);
+
       const aspect = width / height;
       camera.aspect = aspect;
       camera.updateProjectionMatrix();
 
       renderListener.current?.forEach((cb) => cb());
+
+      renderer.setSize(width, height);
+      renderer.render(scene, camera);
 
       requestAnimationFrame(render);
     }
