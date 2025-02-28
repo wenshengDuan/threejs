@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useInit } from "../../hooks/useInit";
 import { useMount } from "../../hooks/useMount";
-import { Matrix3, Mesh, MeshBasicMaterial, SphereGeometry, Vector2, Vector3 } from "three";
+import { ArrowHelper, Group, Matrix3, Mesh, MeshBasicMaterial, SphereGeometry, Vector2, Vector3 } from "three";
 import { on } from "events";
 
 const VectorThree: FC = () => {
@@ -35,22 +35,28 @@ const VectorThree: FC = () => {
     mesh.position.copy(A);
     mesh2.position.copy(B);
 
-    scene.add(mesh, mesh2);
+    const group = new Group();
+    group.add(mesh, mesh2);
+    scene.add(group);
 
-    const p = A.clone();
+    // const p = A.clone();
 
-    onRender(() => {
-      p.add(V.multiplyScalar(0.1));
-      mesh.position.copy(p);
-      mesh.updateMatrixWorld();
-      mesh.updateMatrix();
-    });
+    // onRender(() => {
+    //   p.add(V.multiplyScalar(0.1));
+    //   mesh.position.copy(p);
+    //   mesh.updateMatrixWorld();
+    //   mesh.updateMatrix();
+    // });
 
     const matrix3 = new Matrix3();
     const trans = new Vector2(20, 30);
     const T = matrix3.makeTranslation(trans);
     const R = matrix3.makeRotation(Math.PI / 4);
     console.log("T", T.clone(), "R", R.clone());
+
+    // 创建辅助箭头
+    const arrowHelper = new ArrowHelper(V.normalize(), A, B.clone().sub(A).length(), 0x00ff00);
+    scene.add(arrowHelper);
   });
 
   return (
