@@ -20,6 +20,8 @@ import VectorThree from "../chapter_25/vector3";
 import RayIndex from "../chapter_14/ray";
 import RayCasterIndex from "../chapter_14/raycaster";
 import Point2Line from "../chapter_14/point2line";
+import SnakeGame from "../chapter_snake";
+import WebglRect from "../chapter_34/rect";
 
 export const router = createBrowserRouter(
   [
@@ -139,6 +141,19 @@ export const router = createBrowserRouter(
             {
               path: "vector3",
               element: <VectorThree />,
+            },
+          ],
+        },
+        {
+          path: "chapter/snake",
+          element: <SnakeGame />,
+        },
+        {
+          path: "chapter/34/webgl",
+          children: [
+            {
+              path: "rect",
+              element: <WebglRect />,
             },
           ],
         },
