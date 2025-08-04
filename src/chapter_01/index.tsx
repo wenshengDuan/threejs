@@ -26,6 +26,8 @@ import Stats from "three/examples/jsm/libs/stats.module";
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { createBox } from "./utils";
+import { Button, Modal } from "antd";
+import { reject } from "lodash";
 
 export default function Chapter01() {
   const ref = useRef<HTMLDivElement>(null);
@@ -114,11 +116,7 @@ export default function Chapter01() {
     scene.add(directionalLight);
 
     // 可视化平行光源
-    const directionalLightHelper = new DirectionalLightHelper(
-      directionalLight,
-      10,
-      0xffff00
-    );
+    const directionalLightHelper = new DirectionalLightHelper(directionalLight, 10, 0xffff00);
     scene.add(directionalLightHelper);
 
     // 定义画布宽高
@@ -127,12 +125,13 @@ export default function Chapter01() {
 
     // 创建一个透视相机
     const camera = new PerspectiveCamera(90, width / height, 0.1, 1000);
-    camera.position.set(0, 100, 100);
-    // camera.lookAt(50, 50, 50);
+    camera.position.set(0, 0, 500);
+    camera.up.set(0, 100, 0);
+    camera.lookAt(0, 0, 0);
 
-    // // 可视化相机
-    // const cameraHelper = new CameraHelper(camera);
-    // scene.add(cameraHelper);
+    // 可视化相机
+    const cameraHelper = new CameraHelper(camera);
+    scene.add(cameraHelper);
 
     // 创建一个webgl渲染器
     const renderer = new WebGLRenderer({
@@ -164,9 +163,7 @@ export default function Chapter01() {
     stats.dom.style.inset = "unset";
     stats.dom.style.bottom = "0px";
     stats.dom.style.right = "0px";
-    stats.dom
-      .querySelectorAll("canvas")
-      ?.forEach((canvas) => (canvas.style.display = "block"));
+    stats.dom.querySelectorAll("canvas")?.forEach((canvas) => (canvas.style.display = "block"));
 
     // 动画渲染函数
     function render() {
@@ -205,6 +202,30 @@ export default function Chapter01() {
     >
       {/*  */}
       <h2>渲染一个立方体</h2>
+      <Button
+        type="primary"
+        onClick={() => {
+          Modal.confirm({
+            content: "异步关闭弹窗",
+            onOk: () => {
+              return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  reject(false);
+                }, 1000);
+              });
+            },
+            onCancel: () => {
+              return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  resolve(true);
+                }, 1000);
+              });
+            },
+          });
+        }}
+      >
+        弹窗
+      </Button>
       <div ref={ref} id="canvas"></div>
     </div>
   );

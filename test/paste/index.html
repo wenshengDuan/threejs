@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剪贴板图片获取工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #2575fc, #6a11cb);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .instructions {
+            background: #f0f7ff;
+            border-left: 4px solid #2575fc;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .instructions h2 {
+            margin-bottom: 15px;
+            color: #2575fc;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .step:hover {
+            transform: translateY(-5px);
+        }
+        
+        .step-number {
+            background: #2575fc;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .image-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+        
+        .preview-container, .info-container {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #2575fc;
+        }
+        
+        .section-title i {
+            font-size: 1.5rem;
+        }
+        
+        .drop-area {
+            border: 2px dashed #6a11cb;
+            border-radius: 10px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8fbff;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .drop-area:hover, .drop-area.active {
+            background: #e6f0ff;
+            border-color: #2575fc;
+        }
+        
+        .drop-area i {
+            font-size: 3.5rem;
+            color: #6a11cb;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(90deg, #2575fc, #6a11cb);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(37, 117, 252, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .info-content {
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #6a11cb;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            word-break: break-all;
+        }
+        
+        .browser-support {
+            background: #fff8e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .browser-list {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .browser-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .supported {
+            color: #4caf50;
+        }
+        
+        .partial {
+            color: #ff9800;
+        }
+        
+        .not-supported {
+            color: #f44336;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9ff;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            display: block;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .image-section {
+                flex-direction: column;
+            }
+            
+            .steps {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>浏览器剪贴板图片获取工具</h1>
+            <p class="subtitle">从剪贴板获取图片数据并预览，支持截图粘贴、图片文件粘贴等多种方式</p>
+        </header>
+        
+        <div class="content">
+            <div class="instructions">
+                <h2>使用说明</h2>
+                <p>您可以通过以下任意一种方式将图片放入剪贴板：</p>
+                
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>截图粘贴</h3>
+                        <p>使用系统截图工具（Windows: Win+Shift+S, Mac: Cmd+Shift+4）截取图片</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>复制图片文件</h3>
+                        <p>在文件资源管理器中复制图片文件，然后粘贴到此页面</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>复制网页图片</h3>
+                        <p>在网页中右键点击图片并选择"复制图片"</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status" id="statusMessage"></div>
+            
+            <div class="image-section">
+                <div class="preview-container">
+                    <div class="section-title">
+                        <i class="material-icons">image</i>
+                        <h2>图片预览</h2>
+                    </div>
+                    
+                    <div class="drop-area" id="dropArea">
+                        <i class="material-icons">cloud_upload</i>
+                        <h3>点击或拖拽图片到此处</h3>
+                        <p>或使用快捷键 Ctrl+V 粘贴剪贴板中的图片</p>
+                        <p class="small">支持 PNG, JPG, GIF, BMP 等格式</p>
+                    </div>
+                    
+                    <img id="imagePreview" class="image-preview" alt="剪贴板图片预览">
+                    
+                    <button id="downloadBtn" class="btn" disabled>
+                        <i class="material-icons">file_download</i>下载图片
+                    </button>
+                </div>
+                
+                <div class="info-container">
+                    <div class="section-title">
+                        <i class="material-icons">info</i>
+                        <h2>图片信息</h2>
+                    </div>
+                    
+                    <div class="info-content" id="imageInfo">
+                        <p>图片信息将在此处显示</p>
+                    </div>
+                    
+                    <div class="browser-support">
+                        <h3>浏览器兼容性</h3>
+                        <div class="browser-list">
+                            <div class="browser-item">
+                                <i class="material-icons">desktop_windows</i>
+                                <span>Chrome</span>
+                                <i class="material-icons supported">check_circle</i>
+                            </div>
+                            <div class="browser-item">
+                                <i class="material-icons">desktop_windows</i>
+                                <span>Edge</span>
+                                <i class="material-icons supported">check_circle</i>
+                            </div>
+                            <div class="browser-item">
+                                <i class="material-icons">desktop_windows</i>
+                                <span>Firefox</span>
+                                <i class="material-icons supported">check_circle</i>
+                            </div>
+                            <div class="browser-item">
+                                <i class="material-icons">desktop_windows</i>
+                                <span>Safari</span>
+                                <i class="material-icons partial">warning</i>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.9rem;">
+                            <i class="material-icons">info</i>
+                            Safari 需要手动授权剪贴板访问权限
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 剪贴板图片获取工具 | 使用现代浏览器API实现</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropArea = document.getElementById('dropArea');
+            const imagePreview = document.getElementById('imagePreview');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const imageInfo = document.getElementById('imageInfo');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            let clipboardImage = null;
+            
+            // 显示状态消息
+            function showStatus(message, isSuccess) {
+                statusMessage.textContent = message;
+                statusMessage.className = isSuccess ? 'status success' : 'status error';
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            // 处理粘贴事件
+            function handlePaste(event) {
+                const clipboardData = event.clipboardData || window.clipboardData;
+                if (!clipboardData) {
+                    showStatus('无法访问剪贴板数据', false);
+                    return;
+                }
+                
+                console.log('粘贴事件触发', clipboardData.items.length)
+                
+                // 检查剪贴板中是否有图片
+                for (let i = 0; i < clipboardData.items.length; i++) {
+                    const item = clipboardData.items[i];
+                    if (item.type.indexOf('image') !== -1) {
+                        const blob = item.getAsFile();
+                        if (blob) {
+                            processImageBlob(blob);
+                            event.preventDefault();
+                            return;
+                        }
+                    }
+                }
+                
+                showStatus('剪贴板中没有找到图片', false);
+            }
+            
+            // 处理拖放事件
+            function handleDrop(event) {
+                event.preventDefault();
+                dropArea.classList.remove('active');
+                
+                const files = event.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.type.indexOf('image') !== -1) {
+                        processImageBlob(file);
+                    } else {
+                        showStatus('请拖放图片文件', false);
+                    }
+                }
+            }
+            
+            // 处理图片Blob
+            function processImageBlob(blob) {
+                clipboardImage = blob;
+                
+                // 创建预览
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    dropArea.style.display = 'none';
+                    
+                    // 更新图片信息
+                    updateImageInfo(blob);
+                    
+                    // 启用下载按钮
+                    downloadBtn.disabled = false;
+                    
+                    showStatus('图片已成功加载', true);
+                };
+                reader.readAsDataURL(blob);
+            }
+            
+            // 更新图片信息
+            function updateImageInfo(blob) {
+                const image = new Image();
+                image.onload = function() {
+                    const infoHTML = `
+                        <div class="info-item">
+                            <div class="info-label">文件名</div>
+                            <div class="info-value">clipboard-image.${blob.type.split('/')[1]}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">文件类型</div>
+                            <div class="info-value">${blob.type}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">文件大小</div>
+                            <div class="info-value">${formatFileSize(blob.size)}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">图片尺寸</div>
+                            <div class="info-value">${image.width} × ${image.height} 像素</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">最后修改时间</div>
+                            <div class="info-value">${new Date(blob.lastModified).toLocaleString()}</div>
+                        </div>
+                    `;
+                    
+                    imageInfo.innerHTML = infoHTML;
+                };
+                image.src = URL.createObjectURL(blob);
+            }
+            
+            // 格式化文件大小
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // 下载图片
+            function downloadImage() {
+                if (!clipboardImage) {
+                    showStatus('没有可下载的图片', false);
+                    return;
+                }
+                
+                const url = URL.createObjectURL(clipboardImage);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `clipboard-image.${clipboardImage.type.split('/')[1]}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showStatus('图片下载成功', true);
+            }
+            
+            // 事件监听器
+            document.addEventListener('paste', handlePaste);
+            
+            dropArea.addEventListener('click', function() {
+                this.focus();
+            });
+            
+            dropArea.addEventListener('dragover', function(event) {
+                event.preventDefault();
+                this.classList.add('active');
+            });
+            
+            dropArea.addEventListener('dragleave', function() {
+                this.classList.remove('active');
+            });
+            
+            dropArea.addEventListener('drop', handleDrop);
+            
+            downloadBtn.addEventListener('click', downloadImage);
+            
+            // 初始状态消息
+            showStatus('请使用截图工具（Win+Shift+S / Cmd+Shift+4）截图后粘贴到此页面', true);
+        });
+    </script>
+</body>
+</html>

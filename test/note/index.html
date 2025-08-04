@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: black;
+      margin: 0;
+    }
+    .note-bubble {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50%, -50%;
+    }
+    .note-wrap {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      min-width: 24px;
+      max-width: 256px;
+      transform-origin: bottom left;
+      transition: all .1s ease-in-out;
+      padding: 4px;
+      background-color: #fff;
+      border-radius: 16px 16px 16px 0;
+      cursor: pointer;
+      display: flex;
+    }
+    .note-wrap:hover {
+      min-width: 256px;
+      padding: 16px;
+    }
+    .note-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: rgb(225, 129, 177);
+      color: #fff;
+      font-size: 12px;
+      line-height: 24px;
+      text-align: center;
+    }
+    .note-content {
+      visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all .1s ease-in-out;
+      max-width: 0;
+      max-height: 0;
+    }
+
+    .note-content-hover {
+      max-width: 240px;
+      max-height: 110px;
+      visibility: visible;
+      padding-left: 8px;
+     }
+
+     #test {
+      width: 100px;
+      height: 100px;
+      background-color:aquamarine;
+     }
+  </style>
+</head>
+<body>
+  <div id="test" >
+    <div>title</div>
+    <div class="test-content">
+      <div>content</div>
+      <div>测试</div>
+    </div>
+  </div>
+  <div class="note-bubble">
+    <div class="note-wrap" >
+      <div class="note-avatar">
+        段
+      </div>
+      <div class="note-content">
+        <div>段文生 <span class="note-time">今天 13:45</span></div>
+        <div class="note-remark">测试</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const noteWrap = document.querySelector('.note-wrap');
+    const noteContent = document.querySelector('.note-content');
+
+    let isOuter = false;
+    let isListening = false;
+    
+    function enter(e) {
+      console.log('mouseenter', e);
+       isOuter = false;
+
+      const rect = noteWrap.getBoundingClientRect();
+      console.log('clientX', e.clientX, rect.left,rect.right)
+      console.log('clientY', e.clientY, rect.top, rect.bottom)
+
+      // if (!isHovering) {
+        noteContent.classList.add('note-content-hover');
+      // }
+    }
+    
+    function outer(e) {
+      if (isOuter) {
+        return;
+      }
+      console.log('mouseleave', e);
+      const rect = noteWrap.getBoundingClientRect();
+      console.log('clientX', e.clientX, rect.left,rect.right)
+      console.log('clientY', e.clientY, rect.top, rect.bottom)
+      isListening = false
+       isOuter = true
+        noteContent.classList.remove('note-content-hover');
+       
+       noteWrap.removeEventListener('mouseenter', enter)
+       // 增加延迟时间
+    }
+
+    function transitionEnd(e) {
+        if (e.target === noteWrap && isOuter && !isListening) {
+          console.log('过渡结束',e);
+          noteWrap.addEventListener('mouseenter', enter)  
+          isListening = true;
+          isOuter = true;
+        }
+    }
+    
+    noteWrap.addEventListener('mouseenter', enter);
+    isListening = true;
+    noteWrap.addEventListener('mouseleave', outer);
+    noteWrap.addEventListener('transitionend', transitionEnd)
+
+    const testEl = document.getElementById('test')
+    testEl.addEventListener('mouseenter', (e) => {
+      console.log('test mouseenter', e)
+    })
+    testEl.addEventListener('mouseleave', (e) => {
+      console.log('test mouseleave', e)
+    })
+  </script>
+</body>
+</html>

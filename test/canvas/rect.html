@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>rect</title>
+</head>
+<body>
+  <h1>canvas</h1>
+  <canvas id="canvas" width="200", height="200"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const width = 200;
+    const height = 200;
+
+    canvas.width = width
+    canvas.height = height
+    // canvas.style.backgroundColor = 'black'
+
+    ctx.clearRect(0, 0, width, height);
+    // const point = [{x: 50, y: 50}, {x: 150, y: 150}]
+    const point = [{x: 150, y: 150},{x: 50, y: 50}]
+    const p1 = point[0]
+    const p2 = point[1]
+
+    ctx.fillStyle = '#f00'
+    ctx.arc(0, 0, 1, 0, Math.PI * 2)
+    ctx.fill()
+
+    ctx.lineWidth = 1
+    ctx.strokeStyle = '#F00'
+    
+ 
+    ctx.strokeRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
+    console.log(ctx.getImageData(0, 0, width, height))
+
+
+  </script>
+</body>
+</html>

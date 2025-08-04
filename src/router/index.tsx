@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Chapter01 from "../chapter_01";
 import Gui from "../chapter_01/gui";
+import CustomGeometry from "../chapter_01/customGeometry";
 import PointsModel from "../chapter_02/bufferGeometry/pointsModel";
 import LineModel from "../chapter_02/bufferGeometry/lineModel";
 import LineSegments from "../chapter_02/bufferGeometry/lineSegments";
@@ -22,6 +23,8 @@ import RayCasterIndex from "../chapter_14/raycaster";
 import Point2Line from "../chapter_14/point2line";
 import SnakeGame from "../chapter_snake";
 import WebglRect from "../chapter_34/rect";
+import Linear from "../css/linear";
+import PromiseTest from "../js/Promise";
 
 export const router = createBrowserRouter(
   [
@@ -39,6 +42,10 @@ export const router = createBrowserRouter(
             {
               path: "gui",
               element: <Gui />,
+            },
+            {
+              path: "custom-geometry",
+              element: <CustomGeometry />,
             },
           ],
         },
@@ -156,6 +163,26 @@ export const router = createBrowserRouter(
               element: <WebglRect />,
             },
           ],
+        },
+      ],
+    },
+    {
+      path: "/css",
+      element: <App />,
+      children: [
+        {
+          path: "linear",
+          element: <Linear />,
+        },
+      ],
+    },
+    {
+      path: "/js",
+      element: <App />,
+      children: [
+        {
+          path: "p",
+          element: <PromiseTest />,
         },
       ],
     },
